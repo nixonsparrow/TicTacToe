@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
+    <h1>Your sessions</h1>
+    <div>
+        <form method="POST">
+            <button type="submit">Start a new session</button>
+        </form>
+    </div>
+    {% for session in sessions %}
+        <div>
+            <a href="{{ url_for('games.game_session', sid=session.id) }}">{{ session }}</a>
+        </div>
+    {% endfor %}
+{% endblock content %}

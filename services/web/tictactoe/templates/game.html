@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+    <h4>{{ game.board_string() }}</h4>
+    <div>
+        <a href="{{ url_for('games.game_session', sid=game.session_id) }}">Back to session</a>
+        Turn: <span id="whose_turn">{{ game.whose_turn }}</span>
+        {% if game.whose_turn != "player" and game.empty_fields|length == 9 %}
+            <button id="start_button" class="btn start_button" onclick="startTheGame({{ game.id }});">Start</button>
+        {% endif %}
+    </div>
+    <div class="container">
+        <table class="game-board">
+            {% for field in game.board.keys() %}
+                {% if "1" in field %}
+                    <tr>
+                {% endif %}
+
+                {% include "field.html" %}
+
+                {% if "3" in field %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+{% endblock content %}
+{% block extra_js %}
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='game.js') }}"></script>
+{% endblock extra_js %}
