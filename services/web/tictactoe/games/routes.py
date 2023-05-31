@@ -1,10 +1,12 @@
 from functools import wraps
 
-from flask import abort, redirect, render_template, url_for
+from flask import abort, flash, redirect, render_template, url_for
 from flask.views import MethodView
 from flask_login import AnonymousUserMixin, current_user, login_required
 from sqlalchemy.exc import NoResultFound
 
+from tictactoe import db
+from tictactoe.games.forms import NewGameSessionForm
 from tictactoe.models import Game, GameSession
 
 from . import games
@@ -61,6 +63,32 @@ class SessionAPI(MethodView):
         return redirect(url_for("games.game", gid=new_game.id))
 
 
+class SessionFormView(MethodView):
+    decorators = [login_required]
+
+    def get(self, form=None):
+        if not form:
+            form = NewGameSessionForm()
+        return render_template("new_game_session.html", title="Start a new session", form=form)
+
+    def post(self):
+        form = NewGameSessionForm()
+        if form.validate_on_submit():
+            gs = GameSession(
+                user_id=current_user.id,
+                level=form.level.data,
+                preferred_sign=form.preferred_sign.data.upper()
+            )
+            db.session.add(gs)
+            db.session.commit()
+            flash(
+                f"New game session has been created for you, {current_user.username}. You can now play.",
+                "success",
+            )
+            return redirect(url_for("games.game_session", sid=gs.id))
+        return self.get(form=form)
+
+
 class GameAPI(MethodView):
     decorators = [login_required]
 
@@ -71,5 +99,6 @@ class GameAPI(MethodView):
 
 
 games.add_url_rule("/sessions", view_func=SessionListAPI.as_view("sessions_list"))
+games.add_url_rule("/sessions/new", view_func=SessionFormView.as_view("new_game_session"))
 games.add_url_rule("/sessions/<int:sid>", view_func=SessionAPI.as_view("game_session"))
 games.add_url_rule("/game/<int:gid>", view_func=GameAPI.as_view("game"))

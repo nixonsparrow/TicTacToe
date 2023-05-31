@@ -47,14 +47,15 @@ class Game(db.Model):
     result = db.Column(db.String[10], default=None, nullable=True)
     player_sign = db.Column(db.String[2], default=random_sign, nullable=False)
     starting_sign = db.Column(db.String[2], default=random_sign, nullable=False)
+    level = db.Column(db.Integer, default=1, nullable=False)
     board = db.Column("board", MutableDict.as_mutable(JSON), default=get_empty_board)
     history = db.Column("history", MutableList.as_mutable(JSON), default=list)
 
     def __repr__(self):
-        return f"Game('{self.id}', '{self.session_id}', '{self.result}', '{self.player_sign}')"
+        return f"Game('{self.id}', '{self.session_id}', '{self.result}', '{self.player_sign}', '{self.level}')"
 
     def board_string(self):
-        return f"Game {self.id} | your sign: {self.player_sign} | starting player: {self.starting_player}"
+        return f"Game {self.id} | your sign: {self.player_sign} | starting player: {self.starting_player} | level: {self.level}"
 
     @property
     def starting_player(self):
@@ -166,9 +167,11 @@ class GameSession(db.Model):
     games = db.relationship(
         "Game", backref="session", lazy=True, order_by="desc(Game.id)"
     )
+    level = db.Column(db.Integer, default=1, nullable=False)
+    preferred_sign = db.Column(db.String(2), default="", nullable=False)
 
     def board_string(self):
-        return f"Session {self.id} | wallet: {self.wallet} | games: {len(self.games)}"
+        return f"Session {self.id} | wallet: {self.wallet} | games: {len(self.games)} | level: {self.level} | preferred sign: {self.preferred_sign if self.preferred_sign else 'random'}"
 
     def able_to_start_new_game(self):
         if (
@@ -183,7 +186,10 @@ class GameSession(db.Model):
     def start_a_new_game(self):
         if self.able_to_start_new_game():
             self.wallet -= 3
-            new_game = Game(session_id=self.id)
+            game_data = {"session_id": self.id, "level": self.level}
+            if self.preferred_sign:
+                game_data.update({"player_sign": self.preferred_sign})
+            new_game = Game(**game_data)
             db.session.add(new_game)
             db.session.commit()
             return new_game

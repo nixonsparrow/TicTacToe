@@ -35,7 +35,7 @@ def login_page():
         user = User.query.filter_by(username=form.username.data).first()
         try:
             if user and bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user=user, remember=form.remember.data)
+                login_user(user=user)
                 flash(f"{user.username}, you have been logged in!", "success")
                 next_page = request.args.get("next")
                 return (

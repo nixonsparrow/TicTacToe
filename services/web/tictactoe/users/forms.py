@@ -1,6 +1,6 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, PasswordField, StringField, SubmitField
+from wtforms import PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired, EqualTo, Length, ValidationError
 
 from tictactoe.models import User
@@ -28,9 +28,7 @@ class LoginForm(FlaskForm):
     username = StringField(
         "Username", validators=[DataRequired(), Length(min=1, max=40)]
     )
-    # password = PasswordField("Password", validators=[DataRequired()])
-    password = PasswordField("Password")
-    remember = BooleanField("Remember Me")
+    password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Login")
 
 

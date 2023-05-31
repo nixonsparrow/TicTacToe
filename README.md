@@ -8,14 +8,13 @@ Created with Flask technology and fully dockerized.
 #### create_db
 **Drop** the database (if exists) and **create** a new one with a models' architecture.
 
-#### seed_db
-**Create** user with credentials stored in **SEED_USER** and **SEED_PASS**.
-Defaults: "user" and "pass".
-
 ## Quick start: dockerize development
 In the root folder, copy `.env.example` file and name the new file `.env.dev`.
 After that stay in the root folder and use following commands: 
 ```
+# give permissions to your entrypoint.sh file
+chmod +x services/web/entrypoint.sh
+
 # build and run
 docker-compose build
 docker-compose up -d
@@ -23,7 +22,9 @@ docker-compose up -d
 # delete if not needed anymore
 docker-compose down -v
 ```
-Additional useful commands
+To use the application visit http://localhost5000 in your browser.
+
+#### Additional useful commands
 ```
 # RUN in DEBUG mode
 python manage.py --app tictactoe run --debug
@@ -37,9 +38,6 @@ flask --app tictactoe shell
 ```
 # Create database / recreate - BE CAREFUL WITH THIS COMMAND IN PRODUCTION!
 docker-compose exec web python manage.py create_db
-
-# Create User 
-docker-compose exec web python manage.py seed_db
 
 # Docker running opetations
 docker-compose build
@@ -61,3 +59,33 @@ docker-compose start
 docker start tictactoe-web-1
 docker start tictactoe-db-1
 ```
+
+## Production
+Basically it's the same way as dev server, but you need to use different files:
+- create .env.prod for environment variables:
+  - `APP_FOLDER=/home/app/web`
+  - `DATABASE_URL= <URL with proper database data>`
+- create .env.prod.db for database environment variables:
+  - `POSTGRES_USER= <database user>`
+  - `POSTGRES_PASSWORD= <database password>`
+  - `POSTGRES_DB= <database name>`
+
+And most importantly, to every docker command add the "-f" flag: `-f docker-compose.prod.yml` 
+to point the file that want to use to build images and run. Example:
+```
+docker-compose -f docker-compose.prod.yml build
+```
+If you need to create database (if you get Internal error at homepage):
+```
+docker-compose -f docker-compose.prod.yml exec web python manage.py create_db
+```
+
+## Game and session description
+#### Game info
+Tic-tac-toe is a simple 2-player game with two signs and 9 fields arranged in a 3x3 grid.
+Main goal is to place 3 signs in a row, column or in a diagonal. Players take turns.
+
+#### Session info
+In our application you have 10 coins in each created game session. To start a game within
+the session you need to spend 3 coins. If you win, you get 4 coins, so there is a possibility
+to have infinite games in a one session.
