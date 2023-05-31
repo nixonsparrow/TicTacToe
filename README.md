@@ -10,6 +10,9 @@ Created with Flask technology and fully dockerized.
 
 ## Quick start: dockerize development
 In the root folder, copy `.env.example` file and name the new file `.env.dev`.
+
+In the services/web/tictactoe folder copy `config_example.py` file and name the new file `config.py`.
+
 After that stay in the root folder and use following commands: 
 ```
 # give permissions to your entrypoint.sh file
