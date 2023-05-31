@@ -42,4 +42,5 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/github_actions
           FLASK_APP: tictactoe
         run: |
+          python services/web/manage.py create_db
           pytest --disable-warnings

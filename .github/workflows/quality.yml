@@ -1,0 +1,17 @@
+name: Test PEP8
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Black
+        run: |
+          black --check .
+      - name: Flake8
+        run: |
+          flake8 --ignore=E203,E501,F401,W503 .
+      - name: Isort
+        run: |
+          isort --check-only --profile black .
