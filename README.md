@@ -12,12 +12,16 @@ Created with Flask technology and fully dockerized.
 **Create** user with credentials stored in **SEED_USER** and **SEED_PASS**.
 Defaults: "user" and "pass".
 
-## Quick start locally
-
+## Quick start: dockerize development
+In the root folder, copy `.env.example` file and name the new file `.env.dev`.
+After that stay in the root folder and use following commands: 
 ```
+# build and run
 docker-compose build
 docker-compose up -d
 
+# delete if not needed anymore
+docker-compose down -v
 ```
 Additional useful commands
 ```
@@ -40,7 +44,7 @@ docker-compose exec web python manage.py seed_db
 # Docker running opetations
 docker-compose build
 docker-compose build --no-cache
-docker-compose up -d    # d makes in run in the background
+docker-compose up -d      # d makes in run in the background
 docker-compose down       # remove existing containers       | CAREFUL IN PRODUCTION!
 docker-compose down -v    # include volume of postgres data  | CAREFUL IN PRODUCTION!
 
