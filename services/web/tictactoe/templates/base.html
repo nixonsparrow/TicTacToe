@@ -26,6 +26,7 @@
             <div class="navbar-nav mr-auto">
               <a class="nav-item nav-link" href="{{ url_for('main.about_page') }}">About</a>
               <a class="nav-item nav-link" href="{{ url_for('games.sessions_list') }}">Sessions</a>
+              <a class="nav-item nav-link" href="{{ url_for('games.stats') }}">Stats</a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
@@ -57,26 +58,46 @@
         </div>
         <div class="col-md-4">
           <div class="content-section">
-            <h3>Shortcuts</h3>
             {% if current_user.is_authenticated %}
-            <p class='text-muted'>Useful links.
+            <p class='text-muted'>Useful links
               <ul class="list-group">
                 {% if current_user.sessions %}
                     <li class="list-group-item list-group-item-light">
                         <a href="{{ url_for('games.game_session', sid=current_user.get_last_session_id()) }}">Last session</a>
                     </li>
+                    {% else %}
+                    <li class="list-group-item list-group-item-light">
+                        Start a session first :)
+                    </li>
                 {% endif %}
               </ul>
             </p>
             <p class='text-muted'>History
+              {% if current_user.games() %}
               <ul class="list-group">
                 <li class="list-group-item list-group-item-light">
-                    XXX
+                    Total games played: {{ current_user.games()|length }}
                 </li>
                 <li class="list-group-item list-group-item-light">
-                    YYY
+                    Quickest game: {{ current_user.games()|get_game_time }}
+                </li>
+                <li class="list-group-item list-group-item-light">
+                    Longest game: {{ current_user.games()|get_game_time(False) }}
+                </li>
+                <li class="list-group-item list-group-item-light">
+                    Last game: {{ current_user.games()[-1].creation_time.strftime("%H:%M %d.%m.%Y") }}
+                </li>
+                <li class="list-group-item list-group-item-light">
+                    First game: {{ current_user.games()[0].creation_time.strftime("%H:%M %d.%m.%Y") }}
                 </li>
               </ul>
+              {% else %}
+              <ul class="list-group">
+                  <li class="list-group-item list-group-item-light">
+                      Play a game first :)
+                  </li>
+              </ul>
+              {% endif %}
             </p>
             {% else %}
             <p class='text-muted'>Login to access more content.

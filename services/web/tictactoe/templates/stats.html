@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+    <h4>Statistics</h4>
+    <form method="POST">
+        <div class="form-group">
+            {{ form.date.label(class="form-control-label") }}
+            {% if form.date.errors %}
+                {{ form.date(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.date.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.date(class="form-control form-control-lg", value=date_value) }}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+            <a href="{{ url_for('games.stats') }}">
+                <button class="btn" type="button">Remove date filter</button>
+            </a>
+        </div>
+    </form>
+    <table class="container m-2 tictactoe-table">
+        <tr style="background-color: #f0f0f0">
+            {% include "segments/game_row_header.html" %}
+        </tr>
+        {% for game in games %}
+            <tr style='background-color: {{ loop.cycle("lightgrey", "#f0f0f0") }};'>
+                {% include "segments/game_row.html" %}
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock content %}

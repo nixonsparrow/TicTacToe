@@ -2,10 +2,12 @@
 {% block content %}
     <h4>{{ game.board_string() }}</h4>
     <div>
-        <a href="{{ url_for('games.game_session', sid=game.session_id) }}">Back to session</a>
+        <a href="{{ url_for('games.game_session', sid=game.session_id) }}">
+            <button type="button" class="btn">Back to session</button>
+        </a>
         Turn: <span id="whose_turn">{{ game.whose_turn }}</span>
         {% if game.whose_turn != "player" and game.empty_fields|length == 9 %}
-            <button id="start_button" class="btn start_button" onclick="startTheGame({{ game.id }});">Start</button>
+            <button id="start_button" class="btn" onclick="startTheGame({{ game.id }});">Start</button>
         {% endif %}
     </div>
     <div class="container">
@@ -15,7 +17,7 @@
                     <tr>
                 {% endif %}
 
-                {% include "field.html" %}
+                {% include "segments/game_field.html" %}
 
                 {% if "3" in field %}
                     </tr>

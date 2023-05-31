@@ -1,8 +1,10 @@
+import datetime
 from functools import wraps
 
 from flask import abort, flash, redirect, render_template, url_for
 from flask.views import MethodView
 from flask_login import AnonymousUserMixin, current_user, login_required
+from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound
 
 from tictactoe import db
@@ -10,9 +12,10 @@ from tictactoe.games.forms import NewGameSessionForm
 from tictactoe.models import Game, GameSession
 
 from . import games
+from .forms import StatsForm
 
 
-def session_of_user(func):
+def session_of_user_decorator(func):
     @wraps(func)
     def decorated_view(*args, **kwargs):
         try:
@@ -38,7 +41,9 @@ class SessionListAPI(MethodView):
     decorators = [login_required]
 
     def get(self):
-        sessions = GameSession.query.filter_by(user_id=current_user.id)
+        sessions = GameSession.query.filter_by(user_id=current_user.id).order_by(
+            GameSession.id.desc()
+        )
         return render_template(
             "sessions_list.html", title="Sessions list", sessions=sessions
         )
@@ -49,7 +54,7 @@ class SessionListAPI(MethodView):
 
 
 class SessionAPI(MethodView):
-    decorators = [login_required, session_of_user]
+    decorators = [login_required, session_of_user_decorator]
 
     def get(self, sid):
         game_session = GameSession.query.filter_by(id=sid).one()
@@ -100,9 +105,32 @@ class GameAPI(MethodView):
         )
 
 
+class StatisticsView(MethodView):
+    decorators = [login_required]
+
+    def get(self, date_value=None, form=None, games=None):
+        if not date_value:
+            games = current_user.games()
+        return render_template(
+            "stats.html",
+            title="Stats",
+            date_value=date_value.strftime("%Y-%m-%d") if date_value else None,
+            form=form if form else StatsForm(),
+            games=games,
+        )
+
+    def post(self):
+        form = StatsForm()
+        print(form.date.data)
+        games = current_user.games(date=form.date.data)
+        date_value = form.date.data
+        return self.get(date_value=date_value, form=form, games=games)
+
+
 games.add_url_rule("/sessions", view_func=SessionListAPI.as_view("sessions_list"))
 games.add_url_rule(
     "/sessions/new", view_func=SessionFormView.as_view("new_game_session")
 )
 games.add_url_rule("/sessions/<int:sid>", view_func=SessionAPI.as_view("game_session"))
 games.add_url_rule("/game/<int:gid>", view_func=GameAPI.as_view("game"))
+games.add_url_rule("/stats", view_func=StatisticsView.as_view("stats"))

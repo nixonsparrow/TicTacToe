@@ -43,6 +43,11 @@ class TestGamesRoutesAnonymous:
         assert response.status_code == 302
         assert b'href="/login?next=%2Fsessions"' in response.data
 
+    def test_stats_get_redirects(self, client):
+        response = client.get("/stats")
+        assert response.status_code == 302
+        assert b'href="/login?next=%2Fstats"' in response.data
+
     def test_sessions_trailing_slash_404(self, client):
         response = client.get("/sessions/")
         assert response.status_code == 404
@@ -59,3 +64,15 @@ class TestGamesRoutesAnonymous:
         response = client.get("/game/1")
         assert response.status_code == 302
         assert b'href="/login?next=%2Fgame%2F1"' in response.data
+
+
+class TestUserRoutesLoggedUser:
+    def test_login_page(self, client):
+        response = client.get("/login")
+        assert response.status_code == 200
+        assert b"Login</title>" in response.data
+
+    def test_account_page_redirects(self, client):
+        response = client.get("/account")
+        assert response.status_code == 302
+        assert b'href="/login?next=%2Faccount"' in response.data

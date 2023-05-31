@@ -1,0 +1,18 @@
+<td>
+    <a href="{{ url_for('games.game_session', sid=session.id) }}">{{ session.id }}</a>
+</td>
+<td>
+    <a href="{{ url_for('games.game_session', sid=session.id) }}">{{ session.level }}</a>
+</td>
+<td>
+    <a href="{{ url_for('games.game_session', sid=session.id) }}">{{ session.wallet }}</a>
+</td>
+<td>
+    <a href="{{ url_for('games.game_session', sid=session.id) }}">{{ session.preferred_sign if session.preferred_sign else "random" }}</a>
+</td>
+<td>
+    <a href="{{ url_for('games.game_session', sid=session.id) }}">{{ session.games|length }}</a>
+</td>
+<td>
+    <a href="{{ url_for('games.game_session', sid=session.id) }}">{{ "✅" if session.is_active else "❌" }}</a>
+</td>

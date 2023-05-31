@@ -1,19 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-
     <h1>{{ game_session.board_string() }}</h1>
-    <a href="{{ url_for('games.sessions_list') }}">Back to sessions list</a>
+    <div style="display: flex;">
+    <a href="{{ url_for('games.sessions_list') }}">
+        <button type="button" class="btn">Back to sessions list</button>
+    </a>
     {% if game_session.able_to_start_new_game() %}
-        <div>
+        <div class="ml-2">
             <form method="POST">
                 <button type="submit" class="btn">Start a new game</button>
             </form>
         </div>
     {% endif %}
-    {% for game in game_session.games %}
-        <div>
-            <a href="{{ url_for('games.game', gid=game.id) }}">{{ game }}</a>
-        </div>
-    {% endfor %}
+    </div>
+    {% if game_session.games %}
+    <table class="container m-2 tictactoe-table">
+        <tr style="background-color: #f0f0f0">
+            {% include "segments/game_row_header.html" %}
+        </tr>
+        {% for game in game_session.games %}
+            <tr style='background-color: {{ loop.cycle("lightgrey", "#f0f0f0") }};'>
+                {% include "segments/game_row.html" %}
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
 {% endblock content %}

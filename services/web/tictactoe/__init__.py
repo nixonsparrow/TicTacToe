@@ -31,6 +31,11 @@ def create_app(config_class=Config):
     app.register_blueprint(games)
     app.register_blueprint(errors)
 
+    from tictactoe.template_filters import jinja_filters  # noqa F401
+
+    for jinja_filter in jinja_filters:
+        app.jinja_env.filters[jinja_filter.__name__] = jinja_filter
+
     socketio.init_app(app)
 
     return app

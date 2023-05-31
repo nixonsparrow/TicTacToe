@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, SubmitField
-from wtforms.validators import Length, NumberRange, ValidationError
+from wtforms import DateField, IntegerField, StringField, SubmitField
+from wtforms.validators import DataRequired, Length, NumberRange, ValidationError
 
 LEVEL_MIN = 1
 LEVEL_MAX = 5
@@ -8,7 +8,7 @@ LEVEL_MAX = 5
 
 class NewGameSessionForm(FlaskForm):
     level = IntegerField(
-        "Level", validators=[NumberRange(min=LEVEL_MIN, max=LEVEL_MAX)]
+        "Level", validators=[DataRequired(), NumberRange(min=LEVEL_MIN, max=LEVEL_MAX)]
     )
     preferred_sign = StringField("Sign", validators=[Length(min=0, max=1)])
     submit = SubmitField("Create")
@@ -24,3 +24,8 @@ class NewGameSessionForm(FlaskForm):
             raise ValidationError(
                 f"That is not a valid level. Please choose value between {LEVEL_MIN} and {LEVEL_MAX} inclusive."
             )
+
+
+class StatsForm(FlaskForm):
+    date = DateField("Date", validators=[DataRequired()])
+    submit = SubmitField("Apply date filter")

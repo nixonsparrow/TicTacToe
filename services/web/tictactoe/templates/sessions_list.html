@@ -9,9 +9,16 @@
         </form>
         <a href="{{ url_for('games.new_game_session') }}"><button type="button" class="btn ml-2">Start new session</button></a>
     </div>
-    {% for session in sessions %}
-        <div>
-            <a href="{{ url_for('games.game_session', sid=session.id) }}">{{ session }}</a>
-        </div>
-    {% endfor %}
+    {% if sessions %}
+    <table class="container m-2 tictactoe-table">
+        <tr style="background-color: #f0f0f0">
+            {% include "segments/session_row_header.html" %}
+        </tr>
+        {% for session in sessions %}
+            <tr style='background-color: {{ loop.cycle("lightgrey", "#f0f0f0") }};'>
+                {% include "segments/session_row.html" %}
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
 {% endblock content %}

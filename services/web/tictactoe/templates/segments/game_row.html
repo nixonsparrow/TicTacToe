@@ -1,0 +1,21 @@
+<td>
+    <a href="{{ url_for('games.game', gid=game.id) }}">{{ game.id }}</a>
+</td>
+<td>
+    <a href="{{ url_for('games.game', gid=game.id) }}">{{ game.result if game.result else "" }}</a>
+</td>
+<td>
+    <a href="{{ url_for('games.game', gid=game.id) }}">{{ game.level }}</a>
+</td>
+<td>
+    <a href="{{ url_for('games.game', gid=game.id) }}">{{ game.player_sign }}</a>
+</td>
+<td>
+    <a href="{{ url_for('games.game', gid=game.id) }}">{{ game.starting_player }}</a>
+</td>
+<td>
+    <a href="{{ url_for('games.game', gid=game.id) }}">{{ game.start_time.strftime("%H:%M %d.%m.%Y") if game.start_time else "" }}</a>
+</td>
+<td>
+    <a href="{{ url_for('games.game', gid=game.id) }}">{{ game.time_elapsed.__str__().split(".")[0] if game.time_elapsed else "" }}</a>
+</td>

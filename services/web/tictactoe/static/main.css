@@ -135,3 +135,13 @@ a.article-title:hover {
   margin-bottom: 0px;
   margin-top: 0px;
 }
+
+.tictactoe-table td, th {
+  text-align: center;
+  vertical-align: center;
+}
+
+a:link, a:visited, a:hover, a:active {
+  text-decoration: none;
+  color: black;
+}
