@@ -1,10 +1,8 @@
-import datetime
 from functools import wraps
 
 from flask import abort, flash, redirect, render_template, url_for
 from flask.views import MethodView
 from flask_login import AnonymousUserMixin, current_user, login_required
-from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound
 
 from tictactoe import db

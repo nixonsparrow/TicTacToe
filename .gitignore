@@ -2,7 +2,6 @@
 .env.dev
 .env.prod
 .env.prod.db
-config.py
 venv
 .idea/
 __pycache__
