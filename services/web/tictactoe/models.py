@@ -58,6 +58,10 @@ class Game(db.Model):
         return f"Game {self.id} | your sign: {self.player_sign} | starting player: {self.starting_player} | level: {self.level}"
 
     @property
+    def ai_sign(self):
+        return "X" if self.player_sign == "O" else "O"
+
+    @property
     def starting_player(self):
         return "player" if self.starting_sign == self.player_sign else "opponent"
 
@@ -66,6 +70,10 @@ class Game(db.Model):
         if self.check_result():
             return "-"
         return "player" if self.able_to_make_a_move() else "opponent"
+
+    @property
+    def empty_fields(self):
+        return [field for field in self.board.keys() if self.board[field] is None]
 
     def get_field(self, field):
         return f'{self.board[field] or "."}'
@@ -81,6 +89,30 @@ class Game(db.Model):
             return False
         return True
 
+    def check_if_sign_won(self, sign, board=None):
+        if not board:
+            board = self.board
+        winning_sign = None
+        # straight rows and columns check
+        for char in "abc123":
+            if (
+                len(
+                    [
+                        key
+                        for key in board.keys()
+                        if char in key and board[key] == sign
+                    ]
+                )
+                == 3
+            ):
+                winning_sign = sign
+        # cross lines check:
+        for fields in [["a1", "b2", "c3"], ["a3", "b2", "c1"]]:
+            if len([key for key in fields if board[key] == sign]) == 3:
+                winning_sign = sign
+
+        return winning_sign
+
     def check_result(self):
         if self.result:
             return self.result
@@ -88,23 +120,8 @@ class Game(db.Model):
         winning_sign = None
         for sign in ["X", "O"]:
             if self.board:
-                # straight rows and columns check
-                for char in "abc123":
-                    if (
-                        len(
-                            [
-                                key
-                                for key in self.board.keys()
-                                if char in key and self.board[key] == sign
-                            ]
-                        )
-                        == 3
-                    ):
-                        winning_sign = sign
-                # cross lines check:
-                for fields in [["a1", "b2", "c3"], ["a3", "b2", "c1"]]:
-                    if len([key for key in fields if self.board[key] == sign]) == 3:
-                        winning_sign = sign
+                if winning_sign := self.check_if_sign_won(sign):
+                    break
 
         if winning_sign:
             if winning_sign == self.player_sign:
@@ -138,7 +155,7 @@ class Game(db.Model):
         self.check_result()
         return {"sign_put": sign_put, "continue": True if not self.result else False}
 
-    def make_move_as_ai(self, level=1):
+    def make_move_as_ai(self):
         if self.result:
             return {
                 "field": None,
@@ -146,18 +163,47 @@ class Game(db.Model):
                 "continue": True if not self.result else False,
             }
         sign = "X" if self.player_sign == "O" else "O"
-        if level == 1:
-            field = random.choice(self.empty_fields)
-            self.put_the_sign_on_the_field(field, sign, ai=True)
-            return {
-                "field": field,
-                "sign": sign,
-                "continue": True if not self.result else False,
-            }
+        field = None
 
-    @property
-    def empty_fields(self):
-        return [field for field in self.board.keys() if self.board[field] is None]
+        if self.level >= 4:
+            # check for instant winning move
+            if winning_move := self.check_if_there_is_winning_move(for_player=False):
+                field = winning_move
+
+        if self.level == 5 and not field:
+            # check for instant winning move for player
+            if player_winning_move := self.check_if_there_is_winning_move(for_player=True):
+                field = player_winning_move
+
+        if self.level >= 3 and not field:
+            # put a sign in the middle
+            if "b2" in self.empty_fields:
+                field = "b2"
+
+        if self.level >= 2 and not field:
+            # put a sign in corner
+            corners = [field for field in ["a1", "a3", "c1", "c3"] if field in self.empty_fields]
+            if corners:
+                field = random.choice(corners)
+
+        # make random move for level 1 or if nothing above is possible
+        if not field:
+            field = random.choice(self.empty_fields)
+
+        self.put_the_sign_on_the_field(field, sign, ai=True)
+        return {
+            "field": field,
+            "sign": sign,
+            "continue": True if not self.result else False,
+        }
+
+    def check_if_there_is_winning_move(self, for_player=False):
+        sign = self.player_sign if for_player else self.ai_sign
+        for field in self.empty_fields:
+            temp_board = self.board.copy()
+            temp_board[field] = sign
+            if self.check_if_sign_won(sign=sign, board=temp_board):
+                return field
 
 
 class GameSession(db.Model):
@@ -179,7 +225,6 @@ class GameSession(db.Model):
             and Game.query.filter_by(session_id=self.id, result=None).all()
             or self.wallet < 3
         ):
-            # TODO change to False if not
             return False
         return True
 

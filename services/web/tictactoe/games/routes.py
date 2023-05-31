@@ -69,7 +69,9 @@ class SessionFormView(MethodView):
     def get(self, form=None):
         if not form:
             form = NewGameSessionForm()
-        return render_template("new_game_session.html", title="Start a new session", form=form)
+        return render_template(
+            "new_game_session.html", title="Start a new session", form=form
+        )
 
     def post(self):
         form = NewGameSessionForm()
@@ -77,7 +79,7 @@ class SessionFormView(MethodView):
             gs = GameSession(
                 user_id=current_user.id,
                 level=form.level.data,
-                preferred_sign=form.preferred_sign.data.upper()
+                preferred_sign=form.preferred_sign.data.upper(),
             )
             db.session.add(gs)
             db.session.commit()
@@ -99,6 +101,8 @@ class GameAPI(MethodView):
 
 
 games.add_url_rule("/sessions", view_func=SessionListAPI.as_view("sessions_list"))
-games.add_url_rule("/sessions/new", view_func=SessionFormView.as_view("new_game_session"))
+games.add_url_rule(
+    "/sessions/new", view_func=SessionFormView.as_view("new_game_session")
+)
 games.add_url_rule("/sessions/<int:sid>", view_func=SessionAPI.as_view("game_session"))
 games.add_url_rule("/game/<int:gid>", view_func=GameAPI.as_view("game"))
