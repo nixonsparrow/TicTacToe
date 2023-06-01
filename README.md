@@ -10,8 +10,8 @@ Created with Flask technology and fully dockerized.
 
 ## Quick start: dockerize development
 In the root folder, copy `.env.example` file and name the new file `.env.dev`.
-
-In the services/web/tictactoe folder copy `config_example.py` file and name the new file `config.py`.
+You may change the values as you need, especially it's a good practice to set
+unique SECRET_KEY - at least change some characters there :)
 
 After that stay in the root folder and use following commands: 
 ```
@@ -23,7 +23,7 @@ docker-compose build
 docker-compose up -d
 
 # delete if not needed anymore
-docker-compose down -v
+docker-compose down
 ```
 To use the application visit http://localhost5000 in your browser.
 
@@ -92,3 +92,10 @@ Main goal is to place 3 signs in a row, column or in a diagonal. Players take tu
 In our application you have 10 coins in each created game session. To start a game within
 the session you need to spend 3 coins. If you win, you get 4 coins, so there is a possibility
 to have infinite games in a one session.
+
+## Useful hints
+You can set an environment variable to control AI behaviour - time needed to make its move.
+Just set env variable equal to time in seconds (float), that you prefer, in example:
+```
+AI_MOVE_DELAY_SECONDS=2.54
+```

@@ -78,6 +78,13 @@ class GameSession(db.Model):
     )
     level = db.Column(db.Integer, default=get_random_level, nullable=False)
     preferred_sign = db.Column(db.String(2), default="", nullable=False)
+    creation_time = db.Column(DateTime(timezone=True), server_default=func.now())
+
+    def __repr__(self):
+        return (
+            f"GameSession('{self.id}', '{self.wallet}', '{self.level}', "
+            f"'{self.preferred_sign}', '{self.creation_time}')"
+        )
 
     @property
     def is_active(self):
@@ -86,9 +93,6 @@ class GameSession(db.Model):
         ]:
             return True
         return False
-
-    def board_string(self):
-        return f"Session {self.id} | wallet: {self.wallet} | games: {len(self.games)} | level: {self.level} | sign: {self.preferred_sign if self.preferred_sign else 'random'}"
 
     def able_to_start_new_game(self):
         if (
@@ -133,10 +137,7 @@ class Game(db.Model):
     finish_time = db.Column(DateTime(timezone=True), default=None)
 
     def __repr__(self):
-        return f"Game('{self.id}', '{self.session_id}', '{self.result}', '{self.player_sign}', '{self.level}')"
-
-    def board_string(self):
-        return f"Game {self.id} | your sign: {self.player_sign} | starting player: {self.starting_player} | level: {self.level}"
+        return f"Game('{self.id}', '{self.session_id}', '{self.result}', '{self.level}', '{self.creation_time}')"
 
     @property
     def time_elapsed(self):
