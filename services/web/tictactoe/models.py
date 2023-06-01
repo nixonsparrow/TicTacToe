@@ -1,6 +1,8 @@
 import datetime
 import random
+import time
 
+from flask import current_app
 from flask_login import UserMixin
 from sqlalchemy import JSON, DateTime
 from sqlalchemy.ext.mutable import MutableDict, MutableList
@@ -79,7 +81,6 @@ class GameSession(db.Model):
 
     @property
     def is_active(self):
-        # TODO add condition of existing open game
         if self.able_to_start_new_game() or [
             game for game in self.games if not game.result
         ]:
@@ -237,6 +238,7 @@ class Game(db.Model):
         return {"sign_put": sign_put, "continue": True if not self.result else False}
 
     def make_move_as_ai(self):
+        time.sleep(current_app.config.get("AI_MOVE_DELAY_SECONDS"))
         if self.result:
             return {
                 "field": None,

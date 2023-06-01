@@ -37,7 +37,6 @@ def click_field(data):
             {"field": data["field"], "sign": game.player_sign, "turn": game.whose_turn},
         )
         if move_data["continue"]:
-            sleep(3)
             ai_move = game.make_move_as_ai()
             socketio.emit(
                 "fill_field",

@@ -1,5 +1,5 @@
 <td>
-    <a href="{{ url_for('games.game', gid=game.id) }}">{{ game.id }}</a>
+    <a href="{{ url_for('games.game', gid=game.id) }}">{{ loop.revindex }}</a>
 </td>
 <td>
     <a href="{{ url_for('games.game', gid=game.id) }}">{{ game.result if game.result else "" }}</a>

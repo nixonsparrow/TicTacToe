@@ -1,8 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-    <h1>{{ game_session.board_string() }}</h1>
-    <div style="display: flex;">
+    <div class="d-flex justify-content-around pb-3 text-center ttt-header">
+        <div>
+            <h4>ID<br><b>{{ game_session.id }}</b></h4>
+        </div>
+        <div>
+            <h4>Level<br><b>{{ game_session.level }}</b></h4>
+        </div>
+        <div>
+            <h4>Sign<br><b>{{ game_session.preferred_sign if game_session.preferred_sign else "O/X" }}</b></h4>
+        </div>
+        <div>
+            <h4>Wallet<br><b>{{ game_session.wallet }}</b></h4>
+        </div>
+        <div>
+            <h4>Games<br><b>{{ game_session.games|length }}</b></h4>
+        </div>
+    </div>
+    <div class="d-flex justify-content-around">
     <a href="{{ url_for('games.sessions_list') }}">
         <button type="button" class="btn">Back to sessions list</button>
     </a>
@@ -11,6 +26,10 @@
             <form method="POST">
                 <button type="submit" class="btn">Start a new game</button>
             </form>
+        </div>
+    {% else %}
+        <div class="ml-2">
+            <button type="button" class="btn btn-danger">Start a new game</button>
         </div>
     {% endif %}
     </div>

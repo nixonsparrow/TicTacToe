@@ -10,3 +10,6 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # In app values that are changeable via environment variables
+    AI_MOVE_DELAY_SECONDS = int(os.getenv("AI_MOVE_DELAY_SECONDS", 1))

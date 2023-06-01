@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Home Page</h1>
+    <h1>Tic Tac Toe</h1>
     <p>This is a Tic Tac Toe game created in fast and smart Flask technology with SQLAlchemy database engine
         and using SocketIO communication. You can also simply dockerize whole application.</p>
-    <p>If you have no idea what is that application about, check <a href="{{ url_for('main.about_page') }}">About page</a>.</p>
-    <p>If you are ready to have some fun playing the game, go to <a href="{{ url_for('games.sessions_list') }}">Session page</a>.</p>
+
+    <p>If you have no idea what is that application about, check
+        <a href="{{ url_for('main.about_page') }}">About page</a>.</p>
+
+    <p>If you are ready to have some fun playing the game, go to
+        <a href="{{ url_for('games.sessions_list') }}">Session page</a>.</p>
 {% endblock content %}

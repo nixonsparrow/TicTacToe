@@ -1,5 +1,5 @@
 <td>
-    <a href="{{ url_for('games.game_session', sid=session.id) }}">{{ session.id }}</a>
+    <a href="{{ url_for('games.game_session', sid=session.id) }}">{{ loop.revindex }}</a>
 </td>
 <td>
     <a href="{{ url_for('games.game_session', sid=session.id) }}">{{ session.level }}</a>

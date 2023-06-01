@@ -1,14 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
-    <h4>{{ game.board_string() }}</h4>
-    <div>
+    <div class="d-flex justify-content-around pb-3 text-center ttt-header">
+        <div>
+            <h4>ID<br><b>{{ game.id }}</b></h4>
+        </div>
+        <div>
+            <h4>Level<br><b>{{ game.level }}</b></h4>
+        </div>
+        <div>
+            <h4>Sign<br><b>{{ game.player_sign }}</b></h4>
+        </div>
+        <div>
+            <h4>Starting player<br><b>{{ game.starting_player }}</b></h4>
+        </div>
+    </div>
+    <div class="d-flex justify-content-around pb-3">
         <a href="{{ url_for('games.game_session', sid=game.session_id) }}">
             <button type="button" class="btn">Back to session</button>
         </a>
-        Turn: <span id="whose_turn">{{ game.whose_turn }}</span>
-        {% if game.whose_turn != "player" and game.empty_fields|length == 9 %}
-            <button id="start_button" class="btn" onclick="startTheGame({{ game.id }});">Start</button>
-        {% endif %}
+        <div>
+            {% if game.whose_turn != "player" and game.empty_fields|length == 9 %}
+                <button id="start_button" class="btn" onclick="startTheGame({{ game.id }});">Start</button>
+            {% endif %}
+        </div>
+        <h4 class="d-flex">Turn: <b><span id="whose_turn" class="ml-2">{{ game.whose_turn }}</span></b></h4>
     </div>
     <div class="container">
         <table class="game-board">
